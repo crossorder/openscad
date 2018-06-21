@@ -1,2 +1,2 @@
 # openscad
-Components for OpenSCAD
+This is a library for Components created with OpenSCAD
