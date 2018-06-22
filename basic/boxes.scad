@@ -132,6 +132,10 @@ module showroom() {
         };
         lid02();
     };
+
+    translate([-25,-25,0]) {
+        gridBox01();
+    };
 };
 
 showroom();
