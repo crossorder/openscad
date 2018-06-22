@@ -92,29 +92,29 @@ module gridBox01(
     width=20,
     depth=10,
     height=10,
-    lineThickness=3
+    lineThickness=1
 ) {
     difference() {
         cube([width, depth, height]);
         translate([lineThickness, lineThickness, 0]) {
             cube([
-                width-2*wallThickness,
-                depth-2*wallThickness,
+                width-2*lineThickness,
+                depth-2*lineThickness,
                 height
             ]);
         };
         translate([lineThickness, 0, lineThickness]) {
             cube([
-                width-2*wallThickness,
+                width-2*lineThickness,
                 depth,
-                height-2*wallThickness
+                height-2*lineThickness
             ]);
         };
         translate([0, lineThickness, lineThickness]) {
             cube([
                 width,
-                depth-2*wallThickness,
-                height-2*wallThickness
+                depth-2*lineThickness,
+                height-2*lineThickness
             ]);
         };
     };
