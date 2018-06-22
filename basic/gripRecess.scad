@@ -12,12 +12,36 @@ module gripRecess01(
   // sourrounding wall
 
   // scale it
-  scale([width, height, wallThickness]) {
+  //scale([width, height, wallThickness]) {
   
-  // base
-  cube([width, wallThickness, height]);
+    // base
+    cube([1, 1, 1]);
     // sphere
-    sphere($fn = 0, $fa = 12, $fs = 2, r = 1);
+    sphere(r = 10);
 
+  //};
+};
+
+module gripRecess02() {
+    
+}
+
+//gripRecess01();
+
+ module prism(l, w, h){
+       polyhedron(
+               points=[[0,0,0], [l,0,0], [l,w,0], [0,w,0], [0,w,h], [l,w,h]],
+               faces=[[0,1,2,3],[5,4,3,2],[0,4,5,1],[3,4,0],[5,2,1]]
+               );
+}
+
+module test() {
+difference() {
+prism(10, 10, 10);
+    translate([1, 1, 0]) {
+prism(8, 8, 8);
     };
-  };
+};
+};
+
+test();
