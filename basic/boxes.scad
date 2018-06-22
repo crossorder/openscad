@@ -88,7 +88,37 @@ module lid02(
     };
 };
 
-
+module gridBox01(
+    width=20,
+    depth=10,
+    height=10,
+    lineThickness=3
+) {
+    difference() {
+        cube([width, depth, height]);
+        translate([lineThickness, lineThickness, 0]) {
+            cube([
+                width-2*wallThickness,
+                depth-2*wallThickness,
+                height
+            ]);
+        };
+        translate([lineThickness, 0, lineThickness]) {
+            cube([
+                width-2*wallThickness,
+                depth,
+                height-2*wallThickness
+            ]);
+        };
+        translate([0, lineThickness, lineThickness]) {
+            cube([
+                width,
+                depth-2*wallThickness,
+                height-2*wallThickness
+            ]);
+        };
+    };
+};
 
 module showroom() {
     translate([0,15,0]) {
