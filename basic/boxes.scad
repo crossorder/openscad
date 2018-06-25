@@ -120,6 +120,90 @@ module gridBox01(
     };
 };
 
+module assembledBoxLid(
+    width=20,
+    depth=10,
+    height=1,
+    wallThickness=1,
+    inlayThickness=1
+) {
+    cube([width, depth, height]);
+    translate([wallThickness, wallThickness, height]) {
+        cube([
+            width-2*wallThickness,
+            depth-2*wallThickness,
+            inlayThickness
+        ]);
+    };
+};
+
+module assembledBoxFront(
+    width=20,
+    depth=10,
+    height=1,
+    wallThickness=1,
+    inlayThickness=1
+) {
+    cube([width, depth, height]);
+    translate([wallThickness, wallThickness, height]) {
+        cube([
+            width-2*wallThickness,
+            depth-2*wallThickness,
+            inlayThickness
+        ]);
+    };
+};
+
+module assembledBoxSide(
+    boxWidth=20,
+    boxHeight=10,
+    wallThickness=1
+) {
+    cube([boxWidth, wallThickness, boxHeight]);
+};
+
+module assembledBoxBottom(
+    width=20,
+    depth=10,
+    height=1,
+    wallThickness=1,
+    inlayThickness=1
+) {
+    cube([width, depth, height]);
+    translate([wallThickness, wallThickness, height]) {
+        cube([
+            width-2*wallThickness,
+            depth-2*wallThickness,
+            inlayThickness
+        ]);
+    };
+};
+
+module assembledBox(
+    boxWidth=20,
+    boxLength=10,
+    boxHeight=1,
+    wallThickness=1,
+    bottomThickness=1
+    ) {
+
+    // bottom
+    assembledBoxBottom();
+    
+    // front
+    
+    // back
+    
+    // left side
+    translate([0, -2, 0]) {
+        assembledBoxSide();
+    };
+    
+    // right side
+    
+    // lid
+};
+
 module showroom() {
     translate([0,15,0]) {
         simpleBox01();
@@ -135,6 +219,10 @@ module showroom() {
 
     translate([-25,-25,0]) {
         gridBox01();
+    };
+    
+    translate([0,-25,0]) {
+        assembledBox();
     };
 };
 
