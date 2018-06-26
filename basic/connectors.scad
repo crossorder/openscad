@@ -14,4 +14,54 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-Connectors 
+module beam_V_Female(
+    beamLength=100, beamWidth=15, beamHeight=10,
+    upperFlangeWidth=10, lowerFlangeWidth=7, flangeHeight=5
+) {
+    difference() {
+    // base
+    cube([beamLength, beamWidth, beamHeight]);
+    // flange
+    translate([0, beamWidth/2, 0]) {
+        polyhedron(
+            points=[
+                [0,lowerFlangeWidth/2,0], [0,-lowerFlangeWidth/2,0], [0,-upperFlangeWidth/2,flangeHeight], [0,upperFlangeWidth/2,flangeHeight],
+                [beamLength,lowerFlangeWidth/2,0], [beamLength,-lowerFlangeWidth/2,0], [beamLength,-upperFlangeWidth/2,flangeHeight], [beamLength,upperFlangeWidth/2,flangeHeight]
+            ],
+            faces=[[0,1,2,3],[0,3,7,4],[1,5,6,2],[3,2,6,7],[0,4,5,1],[7,6,5,4]]
+        );
+    };
+};
+};
+
+module beam_V_Male(
+    beamLength=100, beamWidth=15, beamHeight=10,
+    upperFlangeWidth=10, lowerFlangeWidth=0, flangeHeight=5
+) {
+    
+    lowerFlangeWidth= lowerFlangeWidth==0 ? upperFlangeWidth*.8 : lowerFlangeWidth;
+    
+    // base
+    cube([beamLength, beamWidth, beamHeight-flangeHeight]);
+    // flange
+    translate([0, beamWidth/2, beamHeight-flangeHeight]) {
+        polyhedron(
+            points=[
+                [0,lowerFlangeWidth/2,0], [0,-lowerFlangeWidth/2,0], [0,-upperFlangeWidth/2,flangeHeight], [0,upperFlangeWidth/2,flangeHeight],
+                [beamLength,lowerFlangeWidth/2,0], [beamLength,-lowerFlangeWidth/2,0], [beamLength,-upperFlangeWidth/2,flangeHeight], [beamLength,upperFlangeWidth/2,flangeHeight]
+            ],
+            faces=[[0,1,2,3],[0,3,7,4],[1,5,6,2],[3,2,6,7],[0,4,5,1],[7,6,5,4]]
+        );
+    };
+};
+
+module showroom() {
+    translate([0, 0, 0]) {
+        beam_V_Male(lowerFlangeWidth=7);
+    };
+    translate([0, 20, 0]) {
+        beam_V_Female();
+    };  
+};
+
+showroom();
