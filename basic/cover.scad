@@ -1,3 +1,3 @@
 Abdeckkappen
 Stöpsel
-Kappen 
+Kappen für Tischbeine aus Stahlrohr
