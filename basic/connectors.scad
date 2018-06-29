@@ -16,8 +16,13 @@ limitations under the License.
 
 module beam_V_Female(
     beamLength=100, beamWidth=15, beamHeight=10,
-    upperFlangeWidth=10, lowerFlangeWidth=7, flangeHeight=5
+    upperFlangeWidth=0, lowerFlangeWidth=0, flangeHeight=0
 ) {
+
+    upperFlangeWidth= upperFlangeWidth==0 ? (beamWidth/3)*2 : upperFlangeWidth;
+    lowerFlangeWidth= lowerFlangeWidth==0 ? upperFlangeWidth*.8 : lowerFlangeWidth;
+    flangeHeight= flangeHeight==0 ? upperFlangeWidth/2 : flangeHeight;
+
     difference() {
     // base
     cube([beamLength, beamWidth, beamHeight]);
@@ -36,10 +41,12 @@ module beam_V_Female(
 
 module beam_V_Male(
     beamLength=100, beamWidth=15, beamHeight=10,
-    upperFlangeWidth=10, lowerFlangeWidth=0, flangeHeight=5
+    upperFlangeWidth=0, lowerFlangeWidth=0, flangeHeight=0
 ) {
     
+    upperFlangeWidth= upperFlangeWidth==0 ? (beamWidth/3)*2 : upperFlangeWidth;
     lowerFlangeWidth= lowerFlangeWidth==0 ? upperFlangeWidth*.8 : lowerFlangeWidth;
+    flangeHeight= flangeHeight==0 ? upperFlangeWidth/2 : flangeHeight;
     
     // base
     cube([beamLength, beamWidth, beamHeight-flangeHeight]);
@@ -57,7 +64,7 @@ module beam_V_Male(
 
 module showroom() {
     translate([0, 0, 0]) {
-        beam_V_Male(lowerFlangeWidth=7);
+        beam_V_Male();
     };
     translate([0, 20, 0]) {
         beam_V_Female();
