@@ -21,6 +21,12 @@ pcbHeight = 1.5;
 
 bottomGap = 3.5;
 
+// holes
+$fn = 50;
+holeDiameter = 2.5;
+holeDistanceX = 14.2; // distance between both holes
+holeDistanceY = 49.2; // distance from pcb border
+
 module pcb() {
     $fn = 50;
     holeDiameter = 3.0;
@@ -48,12 +54,19 @@ module pcb() {
 
 module pierPlug() {
     borderX = 2;
-    translate([-pcbWidth/2,0,0]) {
+    borderY = 3;
+    borderZ = 2;
+    pierDepth = 3;
+    edgeX = 1.5;
+    translate([-(pcbWidth/2+borderX),-pierDepth,0]) {
         difference() {
-            cube([pcbWidth+2*borderX,6,bottomGap+pcbHeight+2]);
-                translate([borderX,0,bottomGap]) {
-                    cube([pcbWidth+0.2,3,pcbHeight+0.2]);
-                };
+            cube([pcbWidth+2*borderX,borderY+pierDepth,bottomGap+pcbHeight+borderZ]);
+            translate([borderX,0,bottomGap]) {
+                cube([pcbWidth+0.2,pierDepth,pcbHeight+0.2]);
+            };
+            translate([borderX+edgeX,0,bottomGap+pcbHeight]) {
+                cube([pcbWidth+0.2-2*edgeX,pierDepth,pcbHeight+borderZ]);
+            };
         };
     };
 };
@@ -61,22 +74,37 @@ module pierPlug() {
 module pierScrew() {
     borderX = 2;
     borderY = 2;
-    pierDepth = 4;
-    translate([-pcbWidth/2,-(pierDepth+borderY),0]) {
-        difference() {
-            cube([pcbWidth+2*borderX,pierDepth+borderY,bottomGap+pcbHeight]);
-            translate([borderX,borderY,bottomGap]) {
-                cube([pcbWidth+0.2,pierDepth,pcbHeight+0.2]);
+    pierDepth = 6;
+    pinspaceX = pcbWidth-10;
+    pinspaceY = pierDepth-4;
+    pinspaceZ = 2;
+    
+    difference() {
+        translate([-(pcbWidth/2+borderX),-(borderY),0]) {
+            difference() {
+                cube([pcbWidth+2*borderX,pierDepth+borderY,bottomGap+pcbHeight]);
+                translate([borderX,borderY,bottomGap]) {
+                    cube([pcbWidth+0.2,pierDepth,pcbHeight+0.2]);
+                };
             };
-            // holes
-            // ...
         };
+        // holes
+        translate([holeDistanceX/2,0.8+holeDiameter/2,0]) {
+            cylinder(h=bottomGap, r=holeDiameter/2);
+        };
+        translate([-holeDistanceX/2,0.8+holeDiameter/2,0]) {
+            cylinder(h=bottomGap, r=holeDiameter/2);
+        };
+        // pin space
+        translate([-pinspaceX/2,pierDepth-pinspaceY,bottomGap-pinspaceZ]) {
+            cube([pinspaceX,pinspaceY,pinspaceZ]);
+        };        
     };
 };
 
 module relaisMount() {
     //pcb();
-    translate([0,5,0]) {
+    translate([0,pcbDepth+1.2,0]) {
         pierPlug();
     };
     translate([0,0,0]) {
