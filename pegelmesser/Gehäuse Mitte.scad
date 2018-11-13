@@ -130,7 +130,40 @@ module screwBoltCase(width, depth, bottomThickness) {
   };  
 };
 
- module screwBoltRelais() {
+module screwGap(action="add", diameterBolt, diameterScrew, height) {
+  diffH=5;
+  if (action=="add") {
+    difference() {
+      cylinder(r=diameterBolt/2, h=height);
+      translate([0,0,height-diffH]) {
+        cylinder(r=3, h=diffH);
+      };
+      cylinder(r=diameterScrew/2, h=height-diffH);
+    };
+  };
+  if (action=="remove") {
+    cylinder(r=diameterBolt/2, h=height);
+  };
+};
+
+/*
+* heightTop - height of case top
+*/
+module screwGapCase(action="add", width, depth, heightTop) {
+  diameterBolt=10;
+  diameterScrew=2.2;
+  height=heightTop+3;
+  xdif=diameterBolt/2+9;
+  
+  translate([-xdif, depth/2, 0]) {
+    screwGap(action=action, diameterBolt=diameterBolt, diameterScrew=diameterScrew, height=height);
+  };  
+  translate([xdif+width, depth/2, 0]) {
+    screwGap(action=action, diameterBolt=diameterBolt,diameterScrew=diameterScrew, height=height);
+  };
+};
+
+module screwBoltRelais() {
   diameterBolt=8;
   diameterScrew=2.2;
   height=5;
@@ -194,6 +227,10 @@ module cableEntry() {
   };
 };
 
+module cubeWithHoles() {
+    
+};
+
 module screwBolt(diameterBolt, diameterScrew, height) {
   difference() {
     cylinder(r=diameterBolt/2, h= height);
@@ -204,16 +241,16 @@ module screwBolt(diameterBolt, diameterScrew, height) {
 /*
 * Mittelteil
 */
-module body(width, depth, heigth, innerheight) {
+module bodyMiddle(width, depth, height, innerheight) {
   wThick = 2; // wall thickness
   gap = 0.15;
-    
+
   cableGapW = 44;
   cableGapD = wThick;
   cableGapH = 20;
     
   difference() {
-    plate(width, depth+2*wThick+2*gap, heigth, 19+wThick+gap);
+    plate(width, depth+2*wThick+2*gap, height, 19+wThick+gap);
     translate([0, wThick, 0]) {
       plate(width, depth+2*gap, innerheight, 19+gap);
     };
@@ -223,17 +260,160 @@ module body(width, depth, heigth, innerheight) {
   };
 };
 
+/*
+* visible Display 33.6 x 17.3
+*/
+module displayMount() {
+  cube([100, 60, 2]);
+};
+
+module buttonMount() {
+  cube([20, 20, 5]);
+};
+
+module uiMount() {
+  displayMount();
+  buttonMount();
+};
+
+module uiMountHolder(displayW, displayD, gap) {
+  thick = 2; // holder thickness (top / bottom)
+  thick2 = 5; // holder thickness (left / right)
+  height = 6; // general height
+  dist2glass = 2.5;
+  diameterScrew=2.2;
+  
+  // top
+  translate([0, displayD+gap-thick, -height]) {
+    difference() {
+      cube([displayW, thick, height-dist2glass]);
+      for(i = [0:displayW/20]) {
+        translate([i*20, 0, 0]){
+          cube([10, thick, height-dist2glass]);
+        };
+      };
+    };
+  };
+  // bottom
+  translate([0, -gap, -height]) {
+    difference() {
+      cube([displayW, thick, height-dist2glass]);
+      for(i = [0:displayW/20]) {
+        translate([i*20, 0, 0]){
+          cube([10, thick, height-dist2glass]);
+        };
+      };
+    };
+  };
+  // left
+  translate([-(thick2+10), -gap, -dist2glass]) {
+    difference() {
+      cube([thick2, displayD+2*gap, dist2glass]);
+      for(i = [0:displayD/24]) {
+        translate([thick2/2, i*24+6+gap, 0]) {
+          cylinder(r=diameterScrew/2, h=dist2glass);
+        };
+      };
+      for(i = [0:displayD/24-1]) {
+        translate([0, i*24+12+gap, 0]){
+          cube([thick2, 12, dist2glass]);
+        };
+      };
+    };
+  };
+  // right
+  translate([displayW, -gap, -height]) {
+    difference() {
+      cube([thick2, displayD+2*gap, height]);
+      for(i = [0:displayD/24]) {
+        translate([0, i*24+gap, height-dist2glass]){
+          cube([thick2, 12, dist2glass]);
+        };
+      };
+    };
+  };
+};
+
+/*
+* body
+* body border
+* screw holes
+* display gap
+* ui mount
+*/
+module bodyTop(width, depth, height){
+  wThick1 = 2; // wall thickness
+  wThick2 = 1.5; // border wall thickness
+  gap = 0.15;
+  borderH = 3; // border outer height
+  borderInnerH = 8; // border inner height
+  heightBody = height+borderH;
+
+  displayW = 96; // display width
+  displayD = 56; // display depth
+  displayB = 2; // display border
+
+  // body + border
+  difference() {
+    // body
+    plate(width, depth+2*wThick1+2*gap, heightBody, 19+wThick1+gap);
+    // inner gap
+    translate([0, wThick1+wThick2, 0]) {
+      plate(width, depth+2*gap-2*wThick2, heightBody-wThick1, 19+gap-wThick2);   
+    };
+    // inner border gap
+    translate([0, wThick1, borderInnerH]) {
+      plate(width, depth+2*gap, heightBody-(borderInnerH+wThick1), 19+gap);
+    };
+    // outer border gap
+    difference() {
+      plate(width, depth+2*wThick1+2*gap, borderH, 19+wThick1+gap);
+      translate([0, wThick1, 0]) {
+        plate(width, depth+2*gap, borderH, 19+gap);
+      };
+    };
+    // display gap, smaller gap
+    translate([width/2-displayW/2, wThick1+gap+displayB, heightBody-wThick1]) {
+        cube([displayW, displayD, wThick1]);
+    };
+    // display gap, bigger gap
+    translate([width/2-(displayW+2*displayB)/2, wThick1, heightBody-wThick1]) {
+        cube([(displayW+2*displayB), (displayD+2*displayB)+2*gap, wThick1-.5]);
+    };
+    // screw holes remove
+    translate([0, wThick1+gap, 0]) {
+      screwGapCase(action="remove", width=width, depth=depth, heightTop=height);
+    };
+  };
+  // screw holes add
+  translate([0, wThick1+gap, 0]) {
+    screwGapCase(action="add", width=width, depth=depth, heightTop=height);
+  };
+  // ui mount holder
+  translate([width/2-(displayW+2*displayB)/2, wThick1+gap, heightBody-wThick1]) {
+    uiMountHolder(displayW=displayW+2*displayB, displayD=displayD+2*displayB, gap=gap);
+  };
+};
+
 module main() {
 width = 85+50;
 depth = 60;
 height = 40;
 wallThickness = 2;
 
-
-//bottomplate(width=width, depth=depth);
+/*
+bottomplate(width=width, depth=depth);
 
 translate([0, -depth-10, 0]) {
-  body(width=width, depth=depth, heigth=30, innerheight=30);
+  bodyMiddle(width=width, depth=depth, height=30, innerheight=30);
+};
+
+translate([-130, 0, 0]) {
+  uiMount();
+};*/
+
+translate([-190, -depth-10, 0]) {
+  bodyTop(width=width, depth=depth, height=15);
 };
 
 //slottedHole(diameter=4, length=10, height=4, border=2, angle=0);
